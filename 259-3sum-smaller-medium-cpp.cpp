@@ -41,14 +41,14 @@ private:
 	//searchPair is going to return the count
 	//Search pair needs:
 	// the array, target value, the index(in order to determine the first element) and the count
-	int searchPair(std::vector<int>& arr, int target, int i, int &count);
+	int searchPair(std::vector<int>& arr, int target, int i);
 
 public:
 	int searchTriplets(std::vector<int>& arr, int target);
 };
 
 //Passing count by reference to continually keep track of count
-int Solution::searchPair(std::vector<int>& arr, int target, int i, int &count) {
+int Solution::searchPair(std::vector<int>& arr, int targetSum, int i) {
 
 	//Once inside of the searchPair method we can start searching for a match
 	//The goal is to find a pair of triplets that are less than the target and 
@@ -57,58 +57,25 @@ int Solution::searchPair(std::vector<int>& arr, int target, int i, int &count) {
 	// At First this was in searchTriplets but this will be used inside of searchPairs
 	//We are going to be using a left and right pointer with the two pointer method
 	//Left and right need to be initialized here in order to enter the while loop
+	int count = 0;
 	int left = i + 1;
 	int right = arr.size() - 1;
 
 
-	//We need to keep track of the sum of all three elements
-	int tripletSum;
-
-
 	//Continue through the while loop until left and right cross 
 	while (left < right) {
-		//Inside of this while loop we need to figure out the sum of the triplets
-		//and then compare this to the target, if it is less than the target increment the count
 
-		tripletSum = arr[i] + arr[left] + arr[right];
+		if (arr[left] + arr[right] < targetSum) {
 
-		//if the triplet sum is greater than the target we want to go down, scanning for values smaller than target
-		if (tripletSum > target) {
-
-			right--;
-			//We also do not want duplicates so keep going down until we reach a new element
-			while (arr[right] == arr[right + 1]) {
-				right--;
-			}
-		}
-
-		//if the tripletSum is equal to the target, then we still want to go downwards, because we are looking for
-		//a triplet that is smaller than target
-		if (tripletSum == target) {
-
-			right--;
-			////We also do not want duplicates so keep going down until we reach a new element
-			//while (arr[right] == arr[right + 1]) {
-			//	right--;
-			//}
-		}
-
-
-		//If the tripleSum is less than the target, then we want to increase the count and also
-		//
-		if (tripletSum < target) {
-			 
-			count = count + (right - left);
+			count += right - left;
 			left++;
-			////We also do not want duplicates so keep going up until we reach another value
-			//while (arr[left] == arr[left - 1]) {
-			//	left++;
-			//}
 		}
-	}
-	
+		else {
+			right--;
+		}
 
-	//After we break out of the while look we can return count
+	}
+
 	return count;
 }
 
@@ -127,25 +94,13 @@ int Solution::searchTriplets(std::vector<int>& arr, int target) {
 
 	
 
-	
-
 	//We are going to create a for loop to iterate through each element within the array
 	//We have to avoid duplicates, we can say, while the prev is = current, skip 
 	//We can stop at .size -2 since we are looking for triplets
 	for (int i = 0; i < arr.size() - 2; i++) {
 
-		//We need to check for duplicates, starting at i = 1, if i - 1 is the same
-		//then move on to the next index, with continue
-		if (i >= 1 && arr[i] == arr[i - 1]) {
-			continue;
-		}
-
-		//Now we can call our searchPair method 
-
-		searchPair(arr, target, i, count);
-
+		count += searchPair(arr, target - arr[i], i);
 	}
-
 
 
 	return count;
@@ -171,6 +126,10 @@ int main() {
 
 
 
+
+	//Time complexity: O(n^2)
+	//Space complexity: O(n)
+	//Time spent 2.5h
 
 	return 0;
 }
